@@ -118,7 +118,7 @@ export default function LoginPage() {
 
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1">
             {mode === "login" && "Welcome Back, Developer"}
-            {mode === "register" && "Claim Your Free Subdomain"}
+            {mode === "register" && "Claim Your First Subdomain"}
             {mode === "forgot" && "Reset Your Password"}
           </h1>
           <p className="text-sm text-slate-400 mt-1.5">
