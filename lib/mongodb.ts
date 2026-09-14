@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 import dns from "node:dns";
 
-// Fix for Node.js / Windows querySrv ECONNREFUSED error when resolving MongoDB SRV records
+// Configure DNS servers globally to resolve MongoDB SRV records reliably on Windows/Turbopack
 try {
-  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+  dns.setServers(["8.8.8.8", "1.1.1.1", "8.8.4.4"]);
 } catch (e) {
-  console.warn("Could not override DNS servers:", e);
+  console.warn("Could not set custom DNS servers:", e);
 }
 
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -37,9 +37,15 @@ export async function connectToDatabase() {
     return cached!.conn;
   }
 
+  // Ensure DNS is configured before connection
+  try {
+    dns.setServers(["8.8.8.8", "1.1.1.1"]);
+  } catch {}
+
   if (!cached!.promise) {
     const opts = {
       bufferCommands: false,
+      serverSelectionTimeoutMS: 10000,
     };
 
     cached!.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
