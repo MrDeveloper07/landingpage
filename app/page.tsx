@@ -5,6 +5,7 @@ import StatsSection from "@/components/sections/StatsSection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import HowItWorksSection from "@/components/sections/HowItWorksSection";
 import ShowcaseSection from "@/components/sections/ShowcaseSection";
+import FaqSection from "@/components/sections/FaqSection";
 import CtaSection from "@/components/sections/CtaSection";
 import Footer from "@/components/sections/Footer";
 
@@ -17,6 +18,7 @@ export default function Home() {
       <FeaturesSection />
       <HowItWorksSection />
       <ShowcaseSection />
+      <FaqSection />
       <CtaSection />
       <Footer />
     </main>

@@ -32,6 +32,11 @@ export interface WorkflowStep {
   };
 }
 
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
 export interface ShowcaseProfile {
   id: string;
   username: string;
@@ -44,6 +49,39 @@ export interface ShowcaseProfile {
   category: "Full Stack" | "AI & ML" | "DevOps" | "Mobile";
   activeRecord: string;
 }
+
+export const FAQ_ITEMS: FaqItem[] = [
+  {
+    question: "Is is-a-coder.in really 100% free forever?",
+    answer:
+      "Yes! is-a-coder.in is completely free for all software engineers, open-source contributors, students, and creators. There are zero subscription costs, no hidden renewal fees, and no credit card required.",
+  },
+  {
+    question: "How do I connect my subdomain to GitHub Pages or Vercel?",
+    answer:
+      "Select 'CNAME' when submitting your subdomain request and enter your target (e.g. `yourusername.github.io` for GitHub Pages or `cname.vercel-dns.com` for Vercel). Once approved, open your hosting provider's Custom Domain settings, enter `yourname.is-a-coder.in`, and save. Free SSL certificates are automatically provisioned.",
+  },
+  {
+    question: "What DNS record types are supported?",
+    answer:
+      "We support all major DNS records: CNAME (pointing to GitHub Pages, Vercel, Netlify, Render), A Records (IPv4 server addresses), AAAA Records (IPv6), and TXT Records (domain ownership verification for Google, Bing, etc.).",
+  },
+  {
+    question: "How long does it take for a subdomain to be approved and go live?",
+    answer:
+      "Requests are processed rapidly through our Admin Control Center. Once approved, DNS records propagate globally across edge Anycast DNS networks within 2 to 10 minutes worldwide.",
+  },
+  {
+    question: "Can I manage multiple subdomains under one account?",
+    answer:
+      "Yes! Each developer account can register up to 5 active subdomains for their different projects, client portfolios, or open-source documentation sites.",
+  },
+  {
+    question: "How do I update my destination or delete an existing subdomain?",
+    answer:
+      "You can log into your Developer Dashboard at any time to view all your registered subdomains, check their live status, and request destination target updates or record revocations.",
+  },
+];
 
 export const STATS_DATA: StatItem[] = [
   {

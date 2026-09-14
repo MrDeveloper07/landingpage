@@ -18,12 +18,12 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
+  const navLinks: { label: string; href: string; external?: boolean }[] = [
     { label: "Features", href: "#features" },
     { label: "How It Works", href: "#how-it-works" },
     { label: "Showcase", href: "#showcase" },
+    { label: "FAQ", href: "#faq" },
     { label: "Stats", href: "#stats" },
-    { label: "Docs", href: "https://github.com/is-a-coder/register#readme", external: true },
   ];
 
   return (
