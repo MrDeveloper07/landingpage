@@ -1,0 +1,21 @@
+# is-a-coder.in — Free Subdomains for Developers
+
+> is-a-coder.in is a free, permanent subdomain service providing developers, software engineers, and researchers with custom `username.is-a-coder.in` domains.
+
+## What is is-a-coder.in?
+is-a-coder.in allows developers worldwide to claim free subdomains pointing to their GitHub Pages, Vercel apps, Netlify sites, or VPS IP addresses.
+
+## Key Features
+- **Instant Availability Checking**: Real-time validation for subdomains.
+- **DNS Record Types**: Supports CNAME, A, AAAA, and TXT records.
+- **Security & SSL**: Free automatic TLS 1.3 encryption.
+- **Self-Service Web Dashboard**: Users can register and track their domain statuses in real-time.
+- **Admin Review**: Safe, anti-abuse protected approval workflow.
+
+## Usage & API
+- Web Homepage: https://is-a-coder.in
+- User Login & Registration: https://is-a-coder.in/login
+- Developer Dashboard: https://is-a-coder.in/dashboard
+- Subdomain Availability API: GET https://is-a-coder.in/api/subdomains/check?name={subdomain}
+- Terms of Service: https://is-a-coder.in/terms
+- Privacy Policy: https://is-a-coder.in/privacy

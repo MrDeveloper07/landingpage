@@ -14,26 +14,54 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "is-a-coder.in — Free Subdomains & Developer Identity",
+  metadataBase: new URL("https://is-a-coder.in"),
+  title: {
+    default: "is-a-coder.in — Free Developer Subdomains & Identity",
+    template: "%s | is-a-coder.in",
+  },
   description:
-    "Claim your free, permanent username.is-a-coder.in subdomain. Powered by Cloudflare edge DNS with instantaneous GitHub GitOps automation and automatic TLS SSL certificates.",
+    "Claim your free, permanent username.is-a-coder.in subdomain. Fast DNS with instant dashboard, custom CNAME/A records, and free SSL certificates.",
   keywords: [
     "developer portfolio",
     "free subdomain",
     "is-a-coder",
-    "gitops dns",
-    "cloudflare anycast",
     "free domain for developers",
     "github pages custom domain",
     "vercel custom domain",
+    "dns manager",
+    "cname",
   ],
-  authors: [{ name: "is-a-coder.in Community" }],
+  authors: [{ name: "is-a-coder.in Community", url: "https://is-a-coder.in" }],
+  creator: "is-a-coder.in",
+  publisher: "is-a-coder.in",
+  alternates: {
+    canonical: "https://is-a-coder.in",
+  },
   openGraph: {
-    title: "is-a-coder.in — Free Subdomains & Developer Identity",
+    title: "is-a-coder.in — Free Developer Subdomains & Identity",
     description:
-      "Claim your free, permanent username.is-a-coder.in subdomain. Powered by Cloudflare Anycast DNS.",
-    type: "website",
+      "Claim your free, permanent username.is-a-coder.in subdomain. Fast DNS with instant dashboard, custom CNAME/A records, and free SSL certificates.",
     url: "https://is-a-coder.in",
+    siteName: "is-a-coder.in",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "is-a-coder.in — Free Developer Subdomains & Identity",
+    description:
+      "Claim your free, permanent username.is-a-coder.in subdomain. Fast DNS with instant dashboard, custom CNAME/A records, and free SSL certificates.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -45,12 +73,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased scroll-smooth`}
     >
       <body className="min-h-full flex flex-col font-sans bg-[#fafafa] text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
-        <SmoothScroll>
-          {children}
-        </SmoothScroll>
+        <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>
   );

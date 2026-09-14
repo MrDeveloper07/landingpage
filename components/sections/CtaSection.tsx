@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Sparkles, ArrowRight, ShieldCheck, Globe } from "lucide-react";
-import { GithubIcon } from "@/components/ui/Icons";
+import { Sparkles, ArrowRight, ShieldCheck, Globe, CheckCircle2 } from "lucide-react";
 import { triggerConfetti } from "@/utils/confetti";
 import Card3D from "@/components/ui/Card3D";
 
 export default function CtaSection() {
+  const router = useRouter();
   const [handle, setHandle] = useState("");
   const [claimed, setClaimed] = useState(false);
 
@@ -16,12 +17,14 @@ export default function CtaSection() {
     if (!handle.trim()) return;
     setClaimed(true);
     triggerConfetti();
-    setTimeout(() => setClaimed(false), 4000);
+
+    setTimeout(() => {
+      router.push("/dashboard");
+    }, 1200);
   };
 
   return (
     <section className="relative py-28 overflow-hidden">
-      
       {/* 3D background glowing halos */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-gradient-to-tr from-indigo-500/10 via-violet-500/10 to-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -34,11 +37,10 @@ export default function CtaSection() {
         >
           <Card3D intensity={8} glareIntensity={0.3} className="w-full">
             <div className="relative p-10 sm:p-16 rounded-[2.5rem] bg-gradient-to-b from-white via-white to-slate-50/90 border border-slate-200/90 shadow-[0_30px_80px_rgba(79,70,229,0.12),0_1px_3px_rgba(0,0,0,0.05)] text-center overflow-hidden">
-              
               {/* Floating 3D Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-200/80 text-indigo-700 text-xs sm:text-sm font-semibold mb-6 shadow-xs">
                 <Sparkles className="w-4 h-4 text-amber-500" />
-                <span>Zero Cost. Zero Trackers. 100% Open Source.</span>
+                <span>Zero Cost. Instant Approval. Free Forever.</span>
               </div>
 
               {/* Main Headline */}
@@ -48,7 +50,7 @@ export default function CtaSection() {
               </h2>
 
               <p className="mt-5 text-base sm:text-lg text-slate-600 max-w-xl mx-auto leading-relaxed">
-                Join over 34,000 developers worldwide. Claim your permanent subdomain today and point it to your GitHub, Vercel, or custom server.
+                Join over 34,000 developers worldwide. Claim your permanent subdomain today and point it to your GitHub Pages, Vercel, Netlify, or VPS.
               </p>
 
               {/* Direct Interactive Form */}
@@ -78,7 +80,7 @@ export default function CtaSection() {
                   {claimed ? (
                     <>
                       <Sparkles className="w-4 h-4 text-amber-300 animate-bounce" />
-                      <span>Ready to Deploy!</span>
+                      <span>Redirecting...</span>
                     </>
                   ) : (
                     <>
@@ -89,26 +91,20 @@ export default function CtaSection() {
                 </button>
               </form>
 
-              {/* GitHub Star & Instant Setup info */}
+              {/* Trust Badges */}
               <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500 font-medium">
-                <a
-                  href="https://github.com/is-a-coder/register"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-1.5 text-slate-700 hover:text-indigo-600 transition-colors font-semibold"
-                >
-                  <GithubIcon className="w-4 h-4" />
-                  <span>Star on GitHub (1.8k)</span>
-                </a>
+                <span className="flex items-center gap-1.5 text-emerald-600 font-semibold">
+                  <CheckCircle2 className="w-4 h-4" />
+                  Instant Web Dashboard
+                </span>
                 <span className="w-1 h-1 rounded-full bg-slate-300 hidden sm:inline-block" />
                 <span className="flex items-center gap-1.5 text-emerald-600 font-semibold">
                   <ShieldCheck className="w-4 h-4" />
-                  Automated DNS Healthcheck
+                  Fast Admin Approval
                 </span>
                 <span className="w-1 h-1 rounded-full bg-slate-300 hidden sm:inline-block" />
-                <span>Deploy with 1 PR</span>
+                <span>100% Free Forever</span>
               </div>
-
             </div>
           </Card3D>
         </motion.div>

@@ -20,9 +20,11 @@ export interface StatItem {
 
 export interface WorkflowStep {
   step: number;
+  label: string;
+  timeEst: string;
   title: string;
   shortDesc: string;
-  details: string[];
+  checklist: string[];
   codePreview: {
     filename: string;
     language: string;
@@ -49,7 +51,7 @@ export const STATS_DATA: StatItem[] = [
     label: "Active Subdomains",
     value: 34200,
     suffix: "+",
-    description: "Developers hosting live production portfolios and projects",
+    description: "Developers hosting live production portfolios and web apps",
     icon: "Globe",
   },
   {
@@ -58,7 +60,7 @@ export const STATS_DATA: StatItem[] = [
     value: 18,
     suffix: "ms",
     prefix: "<",
-    description: "Powered by Cloudflare Anycast edge network spanning 300+ cities",
+    description: "Multi-region DNS edge resolution with instant propagation",
     icon: "Zap",
   },
   {
@@ -66,7 +68,7 @@ export const STATS_DATA: StatItem[] = [
     label: "Uptime SLA",
     value: 99.99,
     suffix: "%",
-    description: "Enterprise-grade zero downtime DNS propagation infrastructure",
+    description: "Enterprise-grade zero downtime DNS infrastructure",
     icon: "ShieldCheck",
   },
   {
@@ -74,118 +76,125 @@ export const STATS_DATA: StatItem[] = [
     label: "Countries Reached",
     value: 148,
     suffix: "+",
-    description: "Global community of open source builders and software artisans",
+    description: "Global community of open source builders and developers",
     icon: "Users",
   },
 ];
 
 export const FEATURES_DATA: Feature[] = [
   {
-    id: "dns-anycast",
-    title: "Ultra-Fast Anycast DNS",
-    description: "Your domain resolves in under 20 milliseconds worldwide with multi-region DNS caching and automated health checks.",
-    badge: "Cloudflare Anycast",
-    iconName: "Zap",
-    highlight: "< 20ms global resolution",
-    codeSnippet: `;; Query time: 14 msec
-alex.is-a-coder.in.  300  IN  CNAME  alex.github.io.`,
+    id: "web-dashboard",
+    title: "Self-Service Web Dashboard",
+    description: "Claim, configure, and monitor your subdomains in seconds through a beautiful developer portal with live availability checks.",
+    badge: "Interactive UI",
+    iconName: "Cpu",
+    highlight: "10-second setup",
+    codeSnippet: `Request: junior.is-a-coder.in
+Type: CNAME -> junior.github.io
+Status: Active 🟢`,
   },
   {
-    id: "github-gitops",
-    title: "GitOps Pull Request Workflow",
-    description: "Register and manage records through simple JSON files on GitHub. Automated GitHub Actions validate and deploy instantly.",
-    badge: "100% Open Source",
-    iconName: "GitPullRequest",
-    highlight: "CI/CD automated in 45s",
-    codeSnippet: `{
-  "owner": { "username": "alexdev" },
-  "record": { "CNAME": "portfolio.vercel.app" }
-}`,
+    id: "admin-workflow",
+    title: "Fast Admin Review & GoDaddy Ready",
+    description: "Automated queue with 1-click GoDaddy DNS copy helpers and instant approval workflows to keep the platform safe and active.",
+    badge: "1-Click Workflow",
+    iconName: "Shield",
+    highlight: "Zero hassle review",
+    codeSnippet: `📋 Copied for GoDaddy:
+Type: CNAME | Name: junior
+Target: junior.github.io`,
   },
   {
     id: "full-record-support",
     title: "Complete Record Flexibility",
-    description: "Support for A, AAAA, CNAME, TXT (domain verification), MX records, and URL redirections with zero restrictive barriers.",
+    description: "Full support for CNAME (GitHub Pages, Vercel, Netlify), A records (VPS & cloud servers), AAAA (IPv6), and TXT verification records.",
     badge: "All Record Types",
-    iconName: "Cpu",
-    highlight: "A / AAAA / CNAME / TXT / MX",
+    iconName: "Zap",
+    highlight: "CNAME / A / AAAA / TXT",
     codeSnippet: `CNAME -> username.github.io
-TXT   -> google-site-verification=...
-A     -> 185.199.108.153`,
+A     -> 185.199.108.153
+TXT   -> google-site-verification=...`,
   },
   {
     id: "ssl-security",
-    title: "Automatic SSL & DDoS Shield",
-    description: "Pre-configured for Let's Encrypt and Cloudflare Universal SSL with built-in Layer 7 DDoS mitigation out of the box.",
+    title: "Automatic SSL & Anti-Abuse Shield",
+    description: "Built-in reserved name protection, anti-phishing filters, and compatibility with automatic Let's Encrypt / Cloudflare SSL.",
     badge: "Enterprise Security",
-    iconName: "Shield",
+    iconName: "GitPullRequest",
     highlight: "Auto TLS 1.3 & HSTS",
-    codeSnippet: `SSL: Let's Encrypt Authority X3
-TLS 1.3 | HTTP/3 QUIC enabled`,
+    codeSnippet: `Protected: admin, api, root
+SSL: Free Let's Encrypt / TLS 1.3
+Status: 100% Secure`,
   },
 ];
 
 export const WORKFLOW_STEPS: WorkflowStep[] = [
   {
     step: 1,
-    title: "Fork the Repository & Add Your JSON",
-    shortDesc: "Clone the official repository and create a single JSON file with your desired handle.",
-    details: [
-      "Navigate to domains/ directory",
-      "Create yourfile as `username.json`",
-      "Define your CNAME, A, or TXT routing destinations",
+    label: "Search & Claim",
+    timeEst: "~10 sec",
+    title: "Check Availability & Enter Your Target",
+    shortDesc: "Sign in to the developer portal and search for your dream prefix. Real-time validation checks for collisions and reserved words.",
+    checklist: [
+      "Real-time subdomain availability checker",
+      "Choose record type: CNAME, A, AAAA, or TXT",
+      "Enter your target: GitHub Pages, Vercel, or custom IP",
     ],
     codePreview: {
-      filename: "domains/priya.json",
-      language: "json",
-      code: `{
-  "description": "Priya's AI Research Portfolio",
-  "repo": "https://github.com/priyadev/portfolio",
-  "owner": {
-    "username": "priyadev",
-    "email": "priya@ml-labs.io"
-  },
-  "record": {
-    "CNAME": "priyadev.github.io"
-  }
-}`,
+      filename: "dashboard/new-request.tsx",
+      language: "typescript",
+      code: `const request = {
+  subdomain: "junior",
+  fullDomain: "junior.is-a-coder.in",
+  recordType: "CNAME",
+  target: "junior.github.io",
+  status: "pending"
+};`,
     },
   },
   {
     step: 2,
-    title: "Submit PR & Let CI Verify",
-    shortDesc: "Open a Pull Request. GitHub Actions instantly inspects syntax, collisions, and DNS validity.",
-    details: [
-      "Automated linting and schema check runs in 15 seconds",
-      "Collision detector verifies domain exclusivity",
-      "PR is tagged ready for auto-merge bot",
+    label: "Admin Review",
+    timeEst: "~30 sec",
+    title: "Fast Review & DNS Configuration",
+    shortDesc: "Your request appears in the Admin Control Center where the administrator reviews the target and enters the DNS record.",
+    checklist: [
+      "1-Click GoDaddy formatted DNS copy tool",
+      "Anti-abuse & reserved name protection",
+      "Instant status update from Pending to Active",
     ],
     codePreview: {
-      filename: ".github/workflows/verify-dns.yml",
-      language: "yaml",
-      code: `Run DNS Schema Validation...
-✔ Syntax valid (domains/priya.json)
-✔ Subdomain available: priya.is-a-coder.in
-✔ Destination reachable: priyadev.github.io
-Status: All 4 checks passed. Ready to merge.`,
+      filename: "admin/review-queue.log",
+      language: "bash",
+      code: `[QUEUE] New Request Received:
+> Subdomain: junior.is-a-coder.in
+> Target: junior.github.io (CNAME)
+> Requester: Alex Rivera (alex@devmail.io)
+> Action: 📋 Copied for DNS -> [Mark Approved]`,
     },
   },
   {
     step: 3,
-    title: "Live Globally in Under 60 Seconds",
-    shortDesc: "Once merged, our Cloudflare API worker pushes DNS records across 300+ global edge locations.",
-    details: [
-      "Automatic TLS 1.3 certificate generated",
-      "Active CNAME pointing directly to your hosting provider (Vercel, GitHub Pages, Cloudflare Pages, AWS)",
-      "Bragging rights with your shiny `username.is-a-coder.in` URL",
+    label: "Go Live",
+    timeEst: "Instant",
+    title: "Global Propagation & Free SSL",
+    shortDesc: "Your subdomain is now active worldwide. Add it as a Custom Domain in your GitHub Pages or Vercel settings and you are live!",
+    checklist: [
+      "Automatic TLS 1.3 / HTTPS certificate provisioned",
+      "Works with GitHub Pages, Vercel, Netlify & VPS",
+      "Your new address https://junior.is-a-coder.in is live!",
     ],
     codePreview: {
-      filename: "status.log",
-      language: "bash",
-      code: `[DEPLOY] 2026-09-14 13:30:00 UTC
-> Record created: priya.is-a-coder.in -> priyadev.github.io
-> Cloudflare Edge cache refreshed (312 data centers)
-> SSL certificate active. Status: 200 OK`,
+      filename: "dns-status.json",
+      language: "json",
+      code: `{
+  "domain": "junior.is-a-coder.in",
+  "status": "active",
+  "ssl": "enabled",
+  "target": "junior.github.io",
+  "latency": "14ms",
+  "message": "Domain is resolving worldwide!"
+}`,
     },
   },
 ];
@@ -267,8 +276,8 @@ export const SHOWCASE_PROFILES: ShowcaseProfile[] = [
 
 export const TRUST_BADGES = [
   { name: "Cloudflare DNS", icon: "Cloud" },
-  { name: "GitHub Actions", icon: "GitBranch" },
+  { name: "GoDaddy DNS", icon: "Server" },
   { name: "Vercel Fast Edge", icon: "Triangle" },
   { name: "Let's Encrypt SSL", icon: "Lock" },
-  { name: "Fastly Network", icon: "Zap" },
+  { name: "GitHub Pages", icon: "GitBranch" },
 ];

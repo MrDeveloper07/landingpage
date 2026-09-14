@@ -1,0 +1,6 @@
+User-Agent: *
+Allow: /
+Description: is-a-coder.in provides free developer subdomains, DNS management, and developer identity.
+Contact: hello@is-a-coder.in
+Sitemap: https://is-a-coder.in/sitemap.xml
+LLMs-Txt: https://is-a-coder.in/llms.txt

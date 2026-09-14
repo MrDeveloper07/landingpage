@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Menu, X, Terminal, Sparkles } from "lucide-react";
 import { GithubIcon } from "@/components/ui/Icons";
@@ -71,34 +72,23 @@ export default function Navbar() {
 
         {/* Right Action buttons */}
         <div className="hidden sm:flex items-center gap-3">
-          <a
-            href="https://github.com/is-a-coder/register"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-white/80 hover:bg-slate-50 rounded-xl border border-slate-200 transition-all shadow-xs"
-          >
-            <GithubIcon className="w-4 h-4" />
-            <span>Star 1.8k</span>
-          </a>
-
-          <a
-            href="#claim"
+          <Link
+            href="/login"
             className="group relative inline-flex items-center gap-2 px-5 py-2 text-xs sm:text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-[0_4px_14px_rgba(79,70,229,0.3)] hover:shadow-[0_6px_20px_rgba(79,70,229,0.4)] transition-all active:scale-95"
           >
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>Claim Domain</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-          </a>
+            <span>Sign In</span>
+          </Link>
+
         </div>
 
         {/* Mobile menu trigger button */}
         <div className="flex md:hidden items-center gap-2">
-          <a
-            href="#claim"
+          <Link
+            href="/dashboard"
             className="px-3 py-1.5 text-xs font-semibold text-white bg-indigo-600 rounded-lg shadow-sm"
           >
-            Claim
-          </a>
+            Dashboard
+          </Link>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 rounded-lg text-slate-700 hover:bg-slate-100 focus:outline-none"
