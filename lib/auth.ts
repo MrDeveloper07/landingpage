@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
+import { connectToDatabase } from "@/lib/mongodb";
+import User, { IUser } from "@/models/User";
 
 const JWT_SECRET =
   process.env.JWT_SECRET || "is_a_coder_default_super_secret_fallback_key";
@@ -11,6 +13,7 @@ export interface SessionUser {
   name: string;
   email: string;
   role: "user" | "admin";
+  sessionId?: string;
 }
 
 export async function hashPassword(password: string): Promise<string> {
@@ -32,6 +35,7 @@ export function generateToken(user: SessionUser): string {
       name: user.name,
       email: user.email,
       role: user.role,
+      sessionId: user.sessionId,
     },
     JWT_SECRET,
     { expiresIn: "7d" }
@@ -54,6 +58,39 @@ export async function getSession(): Promise<SessionUser | null> {
     return verifyToken(token);
   } catch {
     return null;
+  }
+}
+
+/**
+ * Validates session against database to enforce Single Active Session
+ * (invalidates older session when a user signs in from a second device).
+ */
+export async function getVerifiedSession(): Promise<{
+  session: SessionUser | null;
+  sessionTerminated?: boolean;
+  user?: IUser | null;
+}> {
+  try {
+    const session = await getSession();
+    if (!session) return { session: null };
+
+    await connectToDatabase();
+    const user = await User.findById(session.id);
+    if (!user) return { session: null };
+
+    // If user's current active session ID in DB does not match the token's session ID
+    if (user.currentSessionId && user.currentSessionId !== session.sessionId) {
+      return {
+        session: null,
+        sessionTerminated: true,
+        user,
+      };
+    }
+
+    return { session, user };
+  } catch (err) {
+    console.error("getVerifiedSession Error:", err);
+    return { session: null };
   }
 }
 

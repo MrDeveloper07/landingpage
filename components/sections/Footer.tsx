@@ -2,8 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { Terminal, Heart, Shield, Sparkles, ExternalLink, ShieldCheck } from "lucide-react";
-import { GithubIcon, TwitterIcon } from "@/components/ui/Icons";
+import { Heart, Shield, Sparkles, ExternalLink, ShieldCheck } from "lucide-react";
+import { GithubIcon, TwitterIcon, FaviconIcon } from "@/components/ui/Icons";
 
 export default function Footer() {
   return (
@@ -14,8 +14,8 @@ export default function Footer() {
           {/* Col 1: Brand Info (2 cols on lg) */}
           <div className="lg:col-span-2 space-y-4">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-sm">
-                <Terminal className="w-4 h-4" />
+              <div className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-1 text-white shadow-sm">
+                <FaviconIcon className="w-5 h-5" />
               </div>
               <span className="font-bold text-slate-900 text-lg tracking-tight">
                 is-a-coder<span className="text-indigo-600 font-extrabold">.in</span>
@@ -39,19 +39,19 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2.5 text-sm text-slate-600">
               <li>
-                <a href="#features" className="hover:text-indigo-600 transition-colors">
+                <Link href="/#features" className="hover:text-indigo-600 transition-colors">
                   Features
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#how-it-works" className="hover:text-indigo-600 transition-colors">
+                <Link href="/#how-it-works" className="hover:text-indigo-600 transition-colors">
                   How It Works
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#showcase" className="hover:text-indigo-600 transition-colors">
+                <Link href="/#showcase" className="hover:text-indigo-600 transition-colors">
                   Showcase Gallery
-                </a>
+                </Link>
               </li>
               <li>
                 <Link href="/dashboard" className="hover:text-indigo-600 transition-colors">
@@ -66,12 +66,22 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Col 3: Resources & Standards */}
+          {/* Col 3: Resources & Support */}
           <div>
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4">
-              Resources &amp; AI
+              Resources &amp; Docs
             </h4>
             <ul className="space-y-2.5 text-sm text-slate-600">
+              <li>
+                <Link href="/faq" className="hover:text-indigo-600 transition-colors">
+                  FAQ &amp; Setup Docs
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-indigo-600 transition-colors">
+                  Contact &amp; Support
+                </Link>
+              </li>
               <li>
                 <Link href="/sitemap.xml" className="hover:text-indigo-600 transition-colors">
                   Sitemap XML
@@ -82,38 +92,28 @@ export default function Footer() {
                   Robots.txt
                 </Link>
               </li>
-              <li>
-                <Link href="/llms.txt" className="hover:text-indigo-600 transition-colors">
-                  LLMs.txt (AI Context)
-                </Link>
-              </li>
-              <li>
-                <Link href="/.well-known/security.txt" className="hover:text-indigo-600 transition-colors">
-                  Security.txt
-                </Link>
-              </li>
-              <li>
-                <Link href="/humans.txt" className="hover:text-indigo-600 transition-colors">
-                  Humans.txt
-                </Link>
-              </li>
             </ul>
           </div>
 
-          {/* Col 4: Legal & Connect */}
+          {/* Col 4: Legal & Trust */}
           <div>
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4">
               Legal &amp; Trust
             </h4>
             <ul className="space-y-2.5 text-sm text-slate-600 mb-6">
               <li>
+                <Link href="/terms" className="hover:text-indigo-600 transition-colors">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
                 <Link href="/privacy" className="hover:text-indigo-600 transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-indigo-600 transition-colors">
-                  Terms of Service
+                <Link href="/security" className="hover:text-indigo-600 transition-colors">
+                  Security &amp; Abuse Policy
                 </Link>
               </li>
             </ul>
@@ -146,7 +146,7 @@ export default function Footer() {
 
         {/* Bottom copyright & attribution */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>© 2024 is-a-coder.in. Free developer subdomain registry.</p>
+          <p>© {new Date().getFullYear()} is-a-coder.in. Free developer subdomain registry.</p>
           <div className="flex items-center gap-1">
             <span>Crafted with</span>
             <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 inline" />

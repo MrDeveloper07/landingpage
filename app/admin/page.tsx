@@ -23,6 +23,9 @@ import {
   User,
   Sparkles,
   Info,
+  ShieldAlert,
+  Laptop,
+  Lock,
 } from "lucide-react";
 
 interface AdminRequestItem {
@@ -66,12 +69,18 @@ export default function AdminPage() {
   const [rejectingItem, setRejectingItem] = useState<AdminRequestItem | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [sessionReplacedModalOpen, setSessionReplacedModalOpen] = useState(false);
 
   const fetchAdminData = useCallback(async () => {
     try {
       setLoading(true);
       const authRes = await fetch("/api/auth/me");
       const authData = await authRes.json();
+
+      if (authData.sessionTerminated || authData.reason === "session_replaced") {
+        setSessionReplacedModalOpen(true);
+        return;
+      }
 
       if (!authRes.ok || !authData.authenticated) {
         router.push("/login");
@@ -85,6 +94,11 @@ export default function AdminPage() {
 
       const res = await fetch("/api/admin/requests");
       const data = await res.json();
+
+      if (data.sessionTerminated || data.reason === "session_replaced") {
+        setSessionReplacedModalOpen(true);
+        return;
+      }
 
       if (res.ok) {
         setRequests(data.requests || []);
@@ -107,6 +121,32 @@ export default function AdminPage() {
   useEffect(() => {
     fetchAdminData();
   }, [fetchAdminData]);
+
+  // Session Heartbeat for admin page
+  useEffect(() => {
+    if (sessionReplacedModalOpen) return;
+
+    const checkActiveSession = async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        const data = await res.json();
+        if (data.sessionTerminated || data.reason === "session_replaced") {
+          setSessionReplacedModalOpen(true);
+        }
+      } catch {
+        // Offline / network glitch
+      }
+    };
+
+    const interval = setInterval(checkActiveSession, 5000);
+    const handleFocus = () => checkActiveSession();
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, [sessionReplacedModalOpen]);
 
   // Copy helper for GoDaddy
   const handleCopyGoDaddy = (item: AdminRequestItem) => {
@@ -630,6 +670,69 @@ export default function AdminPage() {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Account Logged In On Another Device (Concurrent Session Invalidation) Modal */}
+      <AnimatePresence>
+        {sessionReplacedModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
+              className="w-full max-w-md rounded-2xl bg-gradient-to-b from-[#141b2d] to-[#0c101c] border border-amber-500/30 p-6 sm:p-7 shadow-2xl shadow-amber-500/10 text-center relative overflow-hidden"
+            >
+              {/* Top ambient glow */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-24 bg-amber-500/15 blur-3xl pointer-events-none" />
+
+              {/* Warning Icon with subtle pulse */}
+              <div className="mx-auto w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mb-5 text-amber-400 relative">
+                <div className="absolute inset-0 rounded-2xl bg-amber-400/10 animate-ping opacity-75" />
+                <Laptop className="w-8 h-8 relative z-10" />
+              </div>
+
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[11px] font-semibold mb-3">
+                <ShieldAlert className="w-3.5 h-3.5" />
+                <span>Security Notice • Single Session Policy</span>
+              </div>
+
+              <h2 className="text-xl font-bold text-white tracking-tight">
+                Account Logged In On Another Device
+              </h2>
+
+              <p className="text-xs sm:text-sm text-slate-300 mt-2.5 leading-relaxed">
+                You have been automatically signed out because this administrator account was just signed into from another computer, browser, or device.
+              </p>
+
+              <div className="mt-4 p-3.5 rounded-xl bg-slate-900/80 border border-white/5 text-left text-xs text-slate-400 space-y-1.5">
+                <div className="flex items-center gap-2 text-slate-300 font-medium">
+                  <Info className="w-4 h-4 text-cyan-400 shrink-0" />
+                  <span>Why was I logged out?</span>
+                </div>
+                <p className="pl-6 text-[11px] text-slate-400 leading-relaxed">
+                  To protect administrative controls and platform security, only one active session per account is permitted at a time.
+                </p>
+              </div>
+
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                <Link
+                  href="/login?reason=session_replaced"
+                  className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2 text-center cursor-pointer"
+                >
+                  <Lock className="w-3.5 h-3.5 text-slate-950" />
+                  <span>Sign In Again On This Device</span>
+                </Link>
+                <Link
+                  href="/"
+                  className="py-3 px-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 font-medium text-xs transition text-center cursor-pointer"
+                >
+                  Homepage
+                </Link>
+              </div>
             </motion.div>
           </div>
         )}

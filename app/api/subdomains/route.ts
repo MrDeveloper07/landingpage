@@ -1,12 +1,25 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import SubdomainRequest from "@/models/SubdomainRequest";
-import { getSession, isReservedSubdomain, isValidSubdomainFormat } from "@/lib/auth";
+import { getVerifiedSession, isReservedSubdomain, isValidSubdomainFormat } from "@/lib/auth";
 
 // GET: List all subdomains for the logged-in user
 export async function GET() {
   try {
-    const session = await getSession();
+    const { session, sessionTerminated } = await getVerifiedSession();
+
+    if (sessionTerminated) {
+      const response = NextResponse.json(
+        {
+          error: "Your account was logged into on another device. This session has been terminated.",
+          sessionTerminated: true,
+          reason: "session_replaced",
+        },
+        { status: 401 }
+      );
+      response.cookies.delete("is_a_coder_token");
+      return response;
+    }
 
     if (!session) {
       return NextResponse.json({ error: "Unauthorized. Please login." }, { status: 401 });
@@ -29,7 +42,20 @@ export async function GET() {
 // POST: Submit a new subdomain request
 export async function POST(req: Request) {
   try {
-    const session = await getSession();
+    const { session, sessionTerminated } = await getVerifiedSession();
+
+    if (sessionTerminated) {
+      const response = NextResponse.json(
+        {
+          error: "Your account was logged into on another device. This session has been terminated.",
+          sessionTerminated: true,
+          reason: "session_replaced",
+        },
+        { status: 401 }
+      );
+      response.cookies.delete("is_a_coder_token");
+      return response;
+    }
 
     if (!session) {
       return NextResponse.json(
@@ -120,6 +146,58 @@ export async function POST(req: Request) {
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Internal Server Error";
     console.error("Create Subdomain Error:", error);
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+
+// DELETE: Delete / Cancel a user's own subdomain request
+export async function DELETE(req: Request) {
+  try {
+    const { session, sessionTerminated } = await getVerifiedSession();
+
+    if (sessionTerminated) {
+      const response = NextResponse.json(
+        {
+          error: "Your account was logged into on another device. This session has been terminated.",
+          sessionTerminated: true,
+          reason: "session_replaced",
+        },
+        { status: 401 }
+      );
+      response.cookies.delete("is_a_coder_token");
+      return response;
+    }
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ error: "Subdomain ID is required" }, { status: 400 });
+    }
+
+    await connectToDatabase();
+    const subdomain = await SubdomainRequest.findOne({ _id: id, userId: session.id });
+
+    if (!subdomain) {
+      return NextResponse.json(
+        { error: "Subdomain record not found or you do not have permission to delete it" },
+        { status: 404 }
+      );
+    }
+
+    await SubdomainRequest.deleteOne({ _id: id });
+
+    return NextResponse.json({
+      success: true,
+      message: `Subdomain ${subdomain.subdomain}.is-a-coder.in removed successfully!`,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Internal Server Error";
+    console.error("Delete Subdomain Error:", error);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

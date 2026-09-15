@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Menu, X, Terminal, Sparkles } from "lucide-react";
-import { GithubIcon } from "@/components/ui/Icons";
+import { ArrowRight, Menu, X, Sparkles } from "lucide-react";
+import { GithubIcon, FaviconIcon } from "@/components/ui/Icons";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -41,9 +41,8 @@ export default function Navbar() {
         
         {/* Brand Logo with 3D depth icon */}
         <a href="#" className="flex items-center gap-2.5 group">
-          <div className="relative w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center text-white group-hover:rotate-3 transition-transform">
-            <Terminal className="w-5 h-5" />
-          
+          <div className="relative w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-1 group-hover:scale-105 transition-transform shadow-sm">
+            <FaviconIcon className="w-6 h-6" />
           </div>
           <div className="flex flex-col">
             <span className="font-bold text-slate-900 text-lg tracking-tight flex items-center gap-1">
@@ -83,12 +82,7 @@ export default function Navbar() {
 
         {/* Mobile menu trigger button */}
         <div className="flex md:hidden items-center gap-2">
-          <Link
-            href="/dashboard"
-            className="px-3 py-1.5 text-xs font-semibold text-white bg-indigo-600 rounded-lg shadow-sm"
-          >
-            Dashboard
-          </Link>
+          
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 rounded-lg text-slate-700 hover:bg-slate-100 focus:outline-none"
