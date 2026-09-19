@@ -74,7 +74,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Can I manage multiple subdomains under one account?",
     answer:
-      "Yes! Each developer account can register up to 5 active subdomains for their different projects, client portfolios, or open-source documentation sites.",
+      "Yes! Each developer account can register up to 3 free active subdomains for their different projects, client portfolios, or open-source documentation sites.",
   },
   {
     question: "How do I update my destination or delete an existing subdomain?",

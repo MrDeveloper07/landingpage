@@ -66,40 +66,44 @@ export async function POST(req: Request) {
       );
     }
 
-    // If OTP is provided, verify it strictly
-    if (otp) {
-      const cleanOtp = otp.toString().trim();
-      const otpRecord = await Otp.findOne({
-        email: normalizedEmail,
-        purpose: "reset_password",
-      });
-
-      if (!otpRecord) {
-        return NextResponse.json(
-          { error: "Verification code has expired or was not requested. Please request a new code." },
-          { status: 400 }
-        );
-      }
-
-      if (otpRecord.attempts >= 5) {
-        await Otp.deleteOne({ _id: otpRecord._id });
-        return NextResponse.json(
-          { error: "Too many incorrect attempts. Please request a new code." },
-          { status: 400 }
-        );
-      }
-
-      if (otpRecord.otp !== cleanOtp) {
-        otpRecord.attempts += 1;
-        await otpRecord.save();
-        return NextResponse.json(
-          { error: `Invalid verification code. (${5 - otpRecord.attempts} attempts remaining)` },
-          { status: 400 }
-        );
-      }
-
-      await Otp.deleteMany({ email: normalizedEmail, purpose: "reset_password" });
+    if (!otp || typeof otp !== "string" || otp.trim().length !== 6 || !/^\d{6}$/.test(otp.trim())) {
+      return NextResponse.json(
+        { error: "A valid 6-digit numeric verification code is required to reset your password." },
+        { status: 400 }
+      );
     }
+
+    const cleanOtp = otp.trim();
+    const otpRecord = await Otp.findOne({
+      email: normalizedEmail,
+      purpose: "reset_password",
+    });
+
+    if (!otpRecord) {
+      return NextResponse.json(
+        { error: "Verification code has expired or was not requested. Please request a new code." },
+        { status: 400 }
+      );
+    }
+
+    if (otpRecord.attempts >= 5) {
+      await Otp.deleteOne({ _id: otpRecord._id });
+      return NextResponse.json(
+        { error: "Too many incorrect verification attempts. Please request a new code." },
+        { status: 400 }
+      );
+    }
+
+    if (otpRecord.otp !== cleanOtp) {
+      otpRecord.attempts += 1;
+      await otpRecord.save();
+      return NextResponse.json(
+        { error: `Invalid verification code. (${5 - otpRecord.attempts} attempts remaining)` },
+        { status: 400 }
+      );
+    }
+
+    await Otp.deleteMany({ email: normalizedEmail, purpose: "reset_password" });
 
     const hashedPassword = await hashPassword(cleanNewPassword);
     user.password = hashedPassword;

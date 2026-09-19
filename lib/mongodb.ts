@@ -129,6 +129,10 @@ export async function connectToDatabase() {
     const opts = {
       bufferCommands: false,
       serverSelectionTimeoutMS: 15000,
+      maxPoolSize: 50, // Maintain up to 50 socket connections for high concurrency
+      minPoolSize: 5,  // Keep at least 5 warm connections ready
+      socketTimeoutMS: 45000,
+      connectTimeoutMS: 15000,
     };
 
     cached!.promise = (async () => {

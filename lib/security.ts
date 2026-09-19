@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 
-// Dummy hash used to equalize execution timing when user is not found (prevents timing-based user enumeration)
-const DUMMY_HASH = "$2a$10$e8w8G85W9j8c5L4B.zVKeO9nF7M1Pq4hI8rS5K2n1q5r4b5n7m";
+// Valid 60-char 10-round dummy bcrypt hash used to equalize execution timing when user is not found (prevents timing-based user enumeration)
+const DUMMY_HASH = "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy";
 
 interface RateLimitRecord {
   count: number;

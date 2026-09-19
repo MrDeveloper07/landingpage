@@ -31,6 +31,7 @@ export async function GET() {
         name: session.name,
         email: session.email,
         role: session.role,
+        maxSubdomains: typeof user.maxSubdomains === "number" ? user.maxSubdomains : 3,
       },
     });
   } catch (error: unknown) {

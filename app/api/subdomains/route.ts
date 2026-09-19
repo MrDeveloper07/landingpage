@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
+import User from "@/models/User";
 import SubdomainRequest from "@/models/SubdomainRequest";
 import { getVerifiedSession, isReservedSubdomain, isValidSubdomainFormat } from "@/lib/auth";
 
@@ -74,6 +75,25 @@ export async function POST(req: Request) {
       );
     }
 
+    if (
+      typeof subdomain !== "string" ||
+      typeof recordType !== "string" ||
+      typeof target !== "string"
+    ) {
+      return NextResponse.json(
+        { error: "Invalid input data format." },
+        { status: 400 }
+      );
+    }
+
+    const cleanTarget = target.trim();
+    if (cleanTarget.length > 255) {
+      return NextResponse.json(
+        { error: "Target value cannot exceed 255 characters." },
+        { status: 400 }
+      );
+    }
+
     const normalizedSubdomain = subdomain.toLowerCase().trim();
 
     if (!isValidSubdomainFormat(normalizedSubdomain)) {
@@ -91,7 +111,8 @@ export async function POST(req: Request) {
     }
 
     const validTypes = ["CNAME", "A", "AAAA", "TXT"];
-    if (!validTypes.includes(recordType.toUpperCase())) {
+    const upperRecordType = recordType.toUpperCase().trim();
+    if (!validTypes.includes(upperRecordType)) {
       return NextResponse.json(
         { error: `Invalid record type. Must be one of: ${validTypes.join(", ")}` },
         { status: 400 }
@@ -100,15 +121,21 @@ export async function POST(req: Request) {
 
     await connectToDatabase();
 
-    // Check if user has already reached limit (e.g. 5 active subdomains)
+    // Look up user custom quota limit or default to 3
+    const userDoc = await User.findById(session.id);
+    const allowedLimit = (userDoc && typeof userDoc.maxSubdomains === "number" && userDoc.maxSubdomains > 0)
+      ? userDoc.maxSubdomains
+      : 3;
+
+    // Check if user has already reached active quota limit
     const userActiveCount = await SubdomainRequest.countDocuments({
       userId: session.id,
       status: { $in: ["pending", "approved"] },
     });
 
-    if (userActiveCount >= 5 && session.role !== "admin") {
+    if (userActiveCount >= allowedLimit && session.role !== "admin") {
       return NextResponse.json(
-        { error: "You have reached the maximum limit of 5 subdomains per account." },
+        { error: `You have reached your limit of ${allowedLimit} subdomains for this account. Delete an inactive subdomain or contact support to request an increase.` },
         { status: 400 }
       );
     }
@@ -131,10 +158,10 @@ export async function POST(req: Request) {
       userName: session.name,
       userEmail: session.email,
       subdomain: normalizedSubdomain,
-      recordType: recordType.toUpperCase(),
-      target: target.trim(),
-      description: description?.trim() || "",
-      repoUrl: repoUrl?.trim() || "",
+      recordType: upperRecordType as "CNAME" | "A" | "AAAA" | "TXT",
+      target: cleanTarget,
+      description: description && typeof description === "string" ? description.trim() : "",
+      repoUrl: repoUrl && typeof repoUrl === "string" ? repoUrl.trim() : "",
       status: "pending",
     });
 

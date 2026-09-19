@@ -76,6 +76,11 @@ const SubdomainRequestSchema = new Schema<ISubdomainRequest>(
   }
 );
 
+// High-performance compound indexes for scaling
+SubdomainRequestSchema.index({ userId: 1, status: 1 });
+SubdomainRequestSchema.index({ status: 1, createdAt: -1 });
+SubdomainRequestSchema.index({ createdAt: -1 });
+
 const SubdomainRequest: Model<ISubdomainRequest> =
   mongoose.models.SubdomainRequest ||
   mongoose.model<ISubdomainRequest>("SubdomainRequest", SubdomainRequestSchema);

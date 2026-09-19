@@ -5,6 +5,7 @@ export interface IUser extends Document {
   email: string;
   password?: string;
   role: "user" | "admin";
+  maxSubdomains?: number;
   currentSessionId?: string;
   lastLoginAt?: Date;
   lastLoginDevice?: string;
@@ -39,6 +40,11 @@ const UserSchema = new Schema<IUser>(
       type: String,
       enum: ["user", "admin"],
       default: "user",
+    },
+    maxSubdomains: {
+      type: Number,
+      default: 3,
+      min: 1,
     },
     currentSessionId: {
       type: String,

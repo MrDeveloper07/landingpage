@@ -24,12 +24,14 @@ export async function GET(req: Request) {
       query.status = statusFilter;
     }
 
-    const requests = await SubdomainRequest.find(query).sort({ createdAt: -1 });
-
-    const totalCount = await SubdomainRequest.countDocuments();
-    const pendingCount = await SubdomainRequest.countDocuments({ status: "pending" });
-    const approvedCount = await SubdomainRequest.countDocuments({ status: "approved" });
-    const rejectedCount = await SubdomainRequest.countDocuments({ status: "rejected" });
+    const [totalCount, pendingCount, approvedCount, rejectedCount, requests] =
+      await Promise.all([
+        SubdomainRequest.countDocuments(),
+        SubdomainRequest.countDocuments({ status: "pending" }),
+        SubdomainRequest.countDocuments({ status: "approved" }),
+        SubdomainRequest.countDocuments({ status: "rejected" }),
+        SubdomainRequest.find(query).sort({ createdAt: -1 }).lean(),
+      ]);
 
     return NextResponse.json({
       success: true,
