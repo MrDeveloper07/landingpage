@@ -16,6 +16,12 @@ import {
   ChevronRight,
   RefreshCw,
   Loader2,
+  Sparkles,
+  Mail,
+  Lock,
+  ArrowRight,
+  ShieldCheck,
+  MailCheck,
 } from "lucide-react";
 import { DashboardProvider, useDashboard } from "./DashboardContext";
 
@@ -49,6 +55,10 @@ function DashboardLayoutContent({ children }: { children: ReactNode }) {
   const isDnsSetup = pathname === "/dashboard/dnssetup" || pathname === "/dashboard/dns-setup";
   const isProfile = pathname === "/dashboard/profile";
   const isSupport = pathname === "/dashboard/support";
+
+  // Is current page locked for regular non-admin users?
+  const isNonAdmin = user?.role !== "admin";
+  const isPageLocked = isNonAdmin && !isProfile && !isSupport;
 
   const getPageTitle = () => {
     if (isDnsSetup) return "DNS Setup & Deployment Guides";
@@ -89,13 +99,8 @@ function DashboardLayoutContent({ children }: { children: ReactNode }) {
             )}
           </div>
 
-          {/* Quick Action Button */}
-          <div className="p-4">
-           
-          </div>
-
           {/* Navigation Links */}
-          <nav className="px-3 space-y-1">
+          <nav className="px-3 pt-4 space-y-1">
             <Link
               href="/dashboard"
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
@@ -108,9 +113,16 @@ function DashboardLayoutContent({ children }: { children: ReactNode }) {
                 <Globe2 className="w-4 h-4" />
                 <span>My Subdomains</span>
               </div>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-slate-800 text-slate-300">
-                {subdomains.length}
-              </span>
+              {isNonAdmin ? (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-500/10 text-blue-300 border border-blue-500/20">
+                  <Lock className="w-2.5 h-2.5" />
+                  <span>Locked</span>
+                </span>
+              ) : (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-slate-800 text-slate-300">
+                  {subdomains.length}
+                </span>
+              )}
             </Link>
 
             <Link
@@ -125,7 +137,14 @@ function DashboardLayoutContent({ children }: { children: ReactNode }) {
                 <BookOpen className="w-4 h-4" />
                 <span>DNS Setup Docs</span>
               </div>
-              <span className="text-[10px] text-cyan-400">Guides</span>
+              {isNonAdmin ? (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-500/10 text-blue-300 border border-blue-500/20">
+                  <Lock className="w-2.5 h-2.5" />
+                  <span>Locked</span>
+                </span>
+              ) : (
+                <span className="text-[10px] text-cyan-400">Guides</span>
+              )}
             </Link>
 
             <Link
@@ -140,7 +159,10 @@ function DashboardLayoutContent({ children }: { children: ReactNode }) {
                 <User className="w-4 h-4" />
                 <span>Profile &amp; Security</span>
               </div>
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <CheckCircle2 className="w-3 h-3" />
+                <span>Active</span>
+              </span>
             </Link>
 
             <Link
@@ -222,8 +244,67 @@ function DashboardLayoutContent({ children }: { children: ReactNode }) {
         </header>
 
         {/* Dashboard Main View Container */}
-        <main className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto">
-          {children}
+        <main className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto space-y-6">
+          {/* If the current page is locked for non-admin, show the locked screen */}
+          {isPageLocked ? (
+            <div className="min-h-[70vh] flex items-center justify-center">
+              <div className="w-full max-w-2xl rounded-3xl bg-gradient-to-b from-slate-900/95 via-[#0c1222]/95 to-[#070b14]/95 border border-blue-500/30 p-8 sm:p-10 shadow-[0_0_60px_rgba(245,158,11,0.1)] text-center relative overflow-hidden">
+                {/* Glow effects */}
+                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-80 bg-blue-500/15 blur-[100px] rounded-full pointer-events-none" />
+                <div className="absolute -bottom-24 right-0 w-60 h-60 bg-cyan-500/10 blur-[90px] rounded-full pointer-events-none" />
+
+                {/* Locked Badge */}
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs font-semibold mb-5 tracking-wide shadow-xs">
+                  <Lock className="w-3.5 h-3.5 text-blue-400" />
+                  <span>Feature Locked • Platform Under Progress</span>
+                </div>
+
+                {/* Icon */}
+                <div className="mx-auto w-18 h-18 rounded-3xl bg-gradient-to-tr from-blue-500/20 via-blue-600/20 to-indigo-600/20 border border-blue-400/40 flex items-center justify-center mb-5 text-blue-400 relative shadow-xl shadow-blue-500/10">
+                  <div className="absolute inset-0 rounded-3xl bg-blue-400/10 animate-pulse" />
+                  <Lock className="w-9 h-9 text-blue-300 relative z-10" />
+                </div>
+
+                {/* Title */}
+                <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                  Subdomain Provisioning is Locked 🚀
+                </h2>
+
+                {/* Description */}
+                <p className="text-xs sm:text-sm text-slate-300 mt-3 max-w-lg mx-auto leading-relaxed">
+                  We are currently performing final Anycast DNS Edge integrations and deployment pipeline tests for <span className="text-cyan-400 font-semibold">is-a-coder.in</span>.
+                </p>
+
+                {/* Notification Email Box */}
+                <div className="mt-6 p-4 rounded-2xl bg-slate-950/80 border border-blue-500/20 text-left space-y-2 shadow-inner">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-blue-300 text-xs font-semibold">
+                      <MailCheck className="w-4 h-4 text-blue-400" />
+                      <span>Launch Notification Guarantee</span>
+                    </div>
+                    <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                      Priority List
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-300">
+                    Once we go officially live, we will immediately send a launch email notification to:
+                  </p>
+                  <div className="p-2.5 rounded-xl bg-slate-900 border border-white/10 flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-cyan-400 shrink-0" />
+                    <span className="text-xs font-mono font-medium text-white truncate">
+                      {user?.email}
+                    </span>
+                  </div>
+                </div>
+
+               
+
+             
+              </div>
+            </div>
+          ) : (
+            children
+          )}
         </main>
       </div>
     </div>

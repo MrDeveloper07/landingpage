@@ -22,6 +22,10 @@ import {
   Eye,
   EyeOff,
   ShieldAlert,
+  Sparkles,
+  Rocket,
+  MailCheck,
+  Bell,
 } from "lucide-react";
 
 type AuthMode = "login" | "register" | "forgot";
@@ -41,6 +45,19 @@ export default function LoginPage() {
 
   // Honeypot field for bot detection
   const [honeypot, setHoneypot] = useState("");
+
+  // Stay Tuned / Under Progress Modal state for non-admin users
+  const [stayTunedModal, setStayTunedModal] = useState<{
+    isOpen: boolean;
+    mode: "register" | "login";
+    userName: string;
+    userEmail: string;
+  }>({
+    isOpen: false,
+    mode: "login",
+    userName: "",
+    userEmail: "",
+  });
 
   // OTP states
   const [otpValues, setOtpValues] = useState<string[]>(["", "", "", "", "", ""]);
@@ -243,16 +260,21 @@ export default function LoginPage() {
           throw new Error(data.error || "Registration failed");
         }
 
-        setSuccessMsg("Email verified & Account created! Redirecting...");
-
-        setTimeout(() => {
-          if (data.user?.role === "admin") {
+        if (data.user?.role === "admin") {
+          setSuccessMsg("Email verified & Admin Account created! Redirecting to Admin Console...");
+          setTimeout(() => {
             router.push("/admin");
-          } else {
-            router.push("/dashboard");
-          }
-          router.refresh();
-        }, 1000);
+            router.refresh();
+          }, 1000);
+        } else {
+          // Non-admin user: Show Stay Tuned / Under Progress Modal
+          setStayTunedModal({
+            isOpen: true,
+            mode: "register",
+            userName: data.user?.name || name,
+            userEmail: data.user?.email || email,
+          });
+        }
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Something went wrong";
         setError(message);
@@ -315,16 +337,21 @@ export default function LoginPage() {
           throw new Error(data.error || "Authentication failed");
         }
 
-        setSuccessMsg("Welcome back! Redirecting to your dashboard...");
-
-        setTimeout(() => {
-          if (data.user?.role === "admin") {
+        if (data.user?.role === "admin") {
+          setSuccessMsg("Welcome back Admin! Redirecting to Admin Console...");
+          setTimeout(() => {
             router.push("/admin");
-          } else {
-            router.push("/dashboard");
-          }
-          router.refresh();
-        }, 1000);
+            router.refresh();
+          }, 1000);
+        } else {
+          // Non-admin user: Show Stay Tuned / Under Progress Modal
+          setStayTunedModal({
+            isOpen: true,
+            mode: "login",
+            userName: data.user?.name || "Developer",
+            userEmail: data.user?.email || email,
+          });
+        }
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Something went wrong";
         setError(message);
@@ -793,6 +820,112 @@ export default function LoginPage() {
           </Link>
         </div>
       </div>
+
+      {/* ================= STAY TUNED / UNDER PROGRESS MODAL ================= */}
+      <AnimatePresence>
+        {stayTunedModal.isOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
+              className="w-full max-w-lg rounded-3xl bg-gradient-to-b from-[#0f172a] via-[#090d1a] to-[#050811] border border-cyan-500/30 p-6 sm:p-8 shadow-[0_0_60px_rgba(6,182,212,0.18)] text-center relative overflow-hidden"
+            >
+              {/* Decorative radial glow */}
+              <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-72 h-72 bg-gradient-to-tr from-cyan-500/25 via-blue-500/25 to-indigo-500/25 blur-[90px] rounded-full pointer-events-none" />
+              <div className="absolute -bottom-24 right-0 w-48 h-48 bg-purple-500/15 blur-[80px] rounded-full pointer-events-none" />
+
+              {/* Status Pill Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold mb-4 tracking-wide shadow-xs">
+                <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-spin" style={{ animationDuration: "6s" }} />
+                <span>Under Progress • Private Beta</span>
+              </div>
+
+              {/* Icon */}
+              <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500/20 via-blue-600/20 to-indigo-600/20 border border-cyan-400/30 flex items-center justify-center mb-4 text-cyan-400 relative shadow-lg shadow-cyan-500/10">
+                <Rocket className="w-8 h-8 text-cyan-400" />
+              </div>
+
+              {/* Heading */}
+              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                {stayTunedModal.mode === "register"
+                  ? "Registration Confirmed! Stay Tuned 🎉"
+                  : "We're Launching Soon — Stay Tuned! 🚀"}
+              </h2>
+
+              {/* Subtitle */}
+              <p className="text-xs sm:text-sm text-slate-300 mt-2.5 leading-relaxed">
+                Thank you for joining <span className="text-cyan-400 font-semibold">is-a-coder.in</span>!
+                Our developer portal &amp; automated DNS provisioning infrastructure are currently in final development.
+              </p>
+
+              {/* Notification Box */}
+              <div className="mt-5 p-4 rounded-2xl bg-slate-900/90 border border-cyan-500/20 text-left space-y-2 relative overflow-hidden shadow-inner">
+                <div className="flex items-center gap-2 text-cyan-300 text-xs font-semibold">
+                  <MailCheck className="w-4 h-4 text-cyan-400" />
+                  <span>Launch Notification Guarantee</span>
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  As soon as the platform goes officially live, we will send an instant email notification to:
+                </p>
+                <div className="p-2.5 rounded-xl bg-slate-950/80 border border-white/10 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 truncate">
+                    <Mail className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                    <span className="text-xs font-mono font-medium text-white truncate">
+                      {stayTunedModal.userEmail}
+                    </span>
+                  </div>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 shrink-0">
+                    <CheckCircle2 className="w-3 h-3" />
+                    Priority List
+                  </span>
+                </div>
+              </div>
+
+              {/* Feature Highlights */}
+              <div className="mt-4 grid grid-cols-3 gap-2 text-[11px] text-slate-300">
+                <div className="p-2.5 rounded-xl bg-slate-900/60 border border-white/5 flex flex-col items-center gap-1 text-center">
+                  <Globe2 className="w-4 h-4 text-cyan-400" />
+                  <span className="font-semibold text-white">100% Free</span>
+                  <span className="text-[10px] text-slate-400">Subdomains</span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-slate-900/60 border border-white/5 flex flex-col items-center gap-1 text-center">
+                  <Sparkles className="w-4 h-4 text-indigo-400" />
+                  <span className="font-semibold text-white">Edge DNS</span>
+                  <span className="text-[10px] text-slate-400">Lightning Fast</span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-slate-900/60 border border-white/5 flex flex-col items-center gap-1 text-center">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <span className="font-semibold text-white">Free SSL</span>
+                  <span className="text-[10px] text-slate-400">Auto Renew</span>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                <Link
+                  href="/"
+                  className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:via-blue-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-cyan-500/25 transition flex items-center justify-center gap-2 text-center cursor-pointer"
+                >
+                  <span>Got It, Return to Home</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStayTunedModal({ ...stayTunedModal, isOpen: false });
+                    setMode("login");
+                  }}
+                  className="py-3 px-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 font-medium text-xs transition text-center cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
